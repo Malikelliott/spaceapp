@@ -27,7 +27,6 @@ pauseButton = pygame.Rect((625, 10, 150, 50))
 
 
 #PLAYER
-ufoImg = pygame.image.load('ufo.png')
 player1 = pygame.image.load('Player1.png')
 player1X = 75
 player1Y = 600
@@ -47,8 +46,6 @@ yAsteroidChange = 0.3
 def asteroid(x,y):
     screen.blit(asteroidImg1, (AsteroidX, AsteroidY))
 
-def ufo():
-    screen.blit(ufoImg,(400,400))
 
 #SCORE
 score = 0 #set variable for score
