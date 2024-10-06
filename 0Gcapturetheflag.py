@@ -12,10 +12,12 @@ pygame.init()
 SCREENWIDTH = 800
 SCREENHEIGHT = int(SCREENWIDTH * 0.8)
 screen = pygame.display.set_mode((SCREENWIDTH,SCREENHEIGHT))
+background = pygame.image.load('background.jpg').convert()
 
-
+background = pygame.transform.scale(background, (SCREENWIDTH, SCREENHEIGHT))
 #Title
 pygame.display.set_caption("ZeroG Capture the Flag")
+
 
 
 #MUSIC (plays during the minigame and -1 means it loops indefinitely)
@@ -34,7 +36,6 @@ blueCaught = False
 
 
 #The player
-ufoImg = pygame.image.load('ufo.png')
 player1 = pygame.image.load('Player1.png')
 player1X = 75.0
 player1Y = 600.0
@@ -43,7 +44,6 @@ player2 = pygame.image.load('Player2.png')
 player2X = 725.0
 player2Y = 600.0
 
-
 move_speed = 0.3 #how fast the player can move left and right
 #this must be higher than the no gravity force applied to the character so that they can move down
 
@@ -51,7 +51,7 @@ def player(x,y):
     screen.blit(player1, (player1X, player1Y))
     screen.blit(player2, (player2X, player2Y))
 
-team1zone = pygame.Rect((75, 600, 100, 100))
+team1zone = pygame.Rect((75, 600, 100, 100)) #draws the base for the teams
 team2zone = pygame.Rect((625, 600, 100, 100))
 
 #Asteroid
@@ -64,15 +64,11 @@ yAsteroidChange = 0.3
 def asteroid(x, y):
     screen.blit(asteroidImg1, (x, y))
 
-def ufo():
-    screen.blit(ufoImg,(400,400))
-
 def flags():
     screen.blit(team1flag,(team1flagX,team1flagY))
     screen.blit(team2flag, (team2flagX, team2flagY))
 
-
-font = pygame.font.Font('freesansbold.ttf', 32)
+font = pygame.font.Font('space age.ttf', 32)
 
 def show_win(x,y):
     winTxt = font.render("You win! Congratulations!" ,True,(0,255,0))
@@ -86,7 +82,8 @@ def show_lose(x,y):
 run = True
 while run:
 
-    screen.fill((0,0,64)) #screen resets each time
+    screen.fill((0,0,0)) #screen resets each time
+    screen.blit(background,(0,0))
     mouse_pos = pygame.mouse.get_pos()
     flags() #draw both flags
     player(player1X, player1Y) #draw player 1 at their starting point
@@ -104,9 +101,6 @@ while run:
 
     if AsteroidY >SCREENHEIGHT:
         AsteroidY = 0
-        #score += 1
-        #xAsteroidChange += 0.1
-        #screen.blit(asteroidImg1.copy(),(AsteroidX + 50,AsteroidY))
 
     if AsteroidX > SCREENWIDTH:
         xAsteroidChange = -0.5
@@ -122,8 +116,8 @@ while run:
         player1X -= move_speed
     elif key[pygame.K_d] | key[pygame.K_RIGHT] == True:
         player1X += move_speed
-    #elif key[pygame.K_w] | key[pygame.K_UP] == True:
-        #player1Y -= move_speed
+    elif key[pygame.K_w] | key[pygame.K_UP] == True:
+        player1Y -= move_speed
     elif key[pygame.K_s] | key[pygame.K_DOWN] == True:
         player1Y += move_speed
 
@@ -154,8 +148,8 @@ while run:
     if redCaught:
         team1flagX = player1X #link the red flag to player 1
         team1flagY = player1Y
-        if team1flagY > SCREENHEIGHT - 76:
-                show_win(200,300) #show winning text
+        if (team1flagY > SCREENHEIGHT - 76) & (team1flagX < 125):
+                show_win(100,300) #show winning text
                 team1flagX = 125 #plant the flag on the base
                 team1flagY = 725
                 player1Y += 1 #stop player 1 from floating
