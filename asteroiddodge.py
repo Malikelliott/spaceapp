@@ -1,9 +1,7 @@
-import random
+=import random
 from turtledemo.nim import SCREENWIDTH, SCREENHEIGHT
 
 import pygame
-import math
-import self
 from pygame import mixer
 
 #INITIALIZATION
@@ -13,13 +11,12 @@ pygame.init()
 SCREENWIDTH = 800
 SCREENHEIGHT = int(SCREENWIDTH * 0.8)
 screen = pygame.display.set_mode((SCREENWIDTH,SCREENHEIGHT))
+background = pygame.image.load('background.jpg').convert()
+background = pygame.transform.scale(background, (SCREENWIDTH, SCREENHEIGHT))
 
 
 #TITLE (displays the title when you open this)
 pygame.display.set_caption("Asteroid Dodge")
-
-#buttons
-pauseButton = pygame.Rect((625, 10, 150, 50))
 
 #MUSIC (plays during the minigame and -1 means it loops indefinitely)
 #mixer.music.load('')
@@ -42,14 +39,13 @@ xAsteroidChange = 0.5
 yAsteroidChange = 0.3
 
 
-
 def asteroid(x,y):
     screen.blit(asteroidImg1, (AsteroidX, AsteroidY))
 
-
 #SCORE
+highscore = 0
 score = 0 #set variable for score
-font = pygame.font.Font('freesansbold.ttf', 32) #text font and font size
+font = pygame.font.Font('space age.ttf', 32) #text font and font size
 textX = 10 #X position of the text
 textY = 10 #Y position of the text
 
@@ -57,12 +53,17 @@ def show_score(x,y):
     scoretxt = font.render("Score: " + str(score),True,(0,255,255)) # rendering the text (what it says and the colour
     screen.blit(scoretxt, (x,y))#puts the text on the screen
 
+def show_lose(x,y):
+    loseTxt = font.render("Game Over\nYour Score: " + str(score) + "\nHigh Score: " + str(highscore) ,
+                          True,(255,0,255))
+    screen.blit(loseTxt, (x,y))
+
 #GameLoop
 run = True
 while run:
 
-    screen.fill((0,0,64)) #screen resets each time
-    #pygame.draw.rect(screen, (255,0,0), player1)
+    screen.fill((0, 0, 0))  # screen resets each time
+    screen.blit(background, (0, 0))
     player(player1X,player1Y)
     asteroid(AsteroidX,AsteroidY)
 
@@ -96,7 +97,6 @@ while run:
         AsteroidY = 0
         score += 1
         yAsteroidChange += 0.1
-        #screen.blit(asteroidImg1.copy(),(AsteroidX + 50,AsteroidY))
 
 
     if AsteroidX > SCREENWIDTH:
@@ -106,8 +106,15 @@ while run:
 
     if (((player1X - AsteroidX < 25) & (player1X - AsteroidX > -25)) &
             ((player1Y - AsteroidY < 25) & (player1Y - AsteroidY > -25))): #if hit
-        pygame.quit()
+        show_lose(100,100)
+        xAsteroidChange = 0
+        yAsteroidChange = 0
+        move_speed = 0
+        player1Y = 30
 
+
+    if score >= highscore:
+        highscore = score
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
